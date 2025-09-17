@@ -42,10 +42,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import br.com.fiap.meuseguroauto.components.CustomDropdown
 import br.com.fiap.meuseguroauto.components.CustomLabel
 import br.com.fiap.meuseguroauto.components.CustomTextInput
 import br.com.fiap.meuseguroauto.components.transformations.PhoneVisualTransformation
+import br.com.fiap.meuseguroauto.model.CarInsurancePlan
 import br.com.fiap.meuseguroauto.model.QuoteInput
+import br.com.fiap.meuseguroauto.model.VehicleTypes
 import br.com.fiap.meuseguroauto.ui.theme.MeuSeguroAutoTheme
 import br.com.fiap.meuseguroauto.utils.Validators
 
@@ -96,14 +99,20 @@ fun QuoteScreen(modifier: Modifier = Modifier) {
             save = {
                 listOf(
                     it.name,
-                    it.email
+                    it.email,
+                    it.telefone,
+                    it.carInsuransePlan,
+                    it.vehicleTypes
                 )
             },
             restore = {
                 QuoteInput(
-                    name = it[0],
-                    email = it[1],
-                    telefone = it[2]
+                    name = it[0] as String,
+                    email = it[1] as String,
+                    telefone = it[2] as String,
+                    carInsuransePlan = CarInsurancePlan.entries[it[3] as Int],
+                    vehicleTypes = VehicleTypes.entries[it[4] as Int]
+
                 )
             })
     ) { mutableStateOf(QuoteInput()) }
@@ -162,6 +171,22 @@ fun QuoteForm(
             validator = Validators::phoneValidator,
             leadingIcon = Icons.Default.Phone,
             visualTransformationCustom = PhoneVisualTransformation()
+        )
+
+        CustomDropdown(
+            label = "Plano",
+            options = CarInsurancePlan.entries,
+            selected = state.carInsuransePlan,
+            onSelect = {onChange(state.copy(carInsuransePlan = it))},
+            optionLabel = {it.label}
+        )
+
+        CustomDropdown(
+            label = "Veículo",
+            options = VehicleTypes.entries,
+            selected = state.vehicleTypes,
+            onSelect = {onChange(state.copy(vehicleTypes = it))},
+            optionLabel = {it.label}
         )
     }
 }
