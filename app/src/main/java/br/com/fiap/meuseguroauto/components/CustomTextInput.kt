@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,14 +33,24 @@ fun CustomTextInput(
     singleLine: Boolean = true,
     isPassword: Boolean = false,
     leadingIcon: ImageVector? = null,
-    //validator: ((String) -> String?)? = null paramos aqui, slide 48
+    validator: ((String) -> String?)? = null,
+    visualTransformationCustom: VisualTransformation? = null
+
 ) {
+    var errorMessage by remember {
+        mutableStateOf<String?>(null)
+    }
+
+
     var passwordVisible by remember {
         mutableStateOf(false)
     }
     OutlinedTextField(
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = {
+            onValueChange(it)
+            // aplica validação sempre que muda
+            errorMessage = validator?.invoke(it) },
         label = { Text(label) },
         singleLine = singleLine,
         modifier = Modifier
@@ -55,8 +66,13 @@ fun CustomTextInput(
             { Icon(imageVector = it, contentDescription = null) }
         },
         // Se for senha, adiciona ícone para mostrar/ocultar
-        visualTransformation = if (isPassword && !passwordVisible)
-            PasswordVisualTransformation() else VisualTransformation.None,
+        visualTransformation = when {
+            isPassword && !passwordVisible ->
+                PasswordVisualTransformation()
+            visualTransformationCustom != null ->
+                visualTransformationCustom
+            else -> VisualTransformation.None
+        },
         trailingIcon = {
             if (isPassword) {
                 val image = if (passwordVisible) Icons.Default.Visibility
@@ -68,5 +84,13 @@ fun CustomTextInput(
             }
         }
     )
+    if (errorMessage != null) {
+        Text(
+            text = errorMessage!!,
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(start = 8.dp)
+        )
+    }
 
 }

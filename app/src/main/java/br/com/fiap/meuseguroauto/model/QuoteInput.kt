@@ -11,5 +11,6 @@ import br.com.fiap.meuseguroauto.QuoteForm
 
 data class QuoteInput(
     val name: String = "",
-    val email: String = ""
+    val email: String = "",
+    val telefone: String = ""
 )

@@ -1,4 +1,4 @@
-package br.com.fiap.meuseguroauto
+ package br.com.fiap.meuseguroauto
 
 import android.os.Bundle
 import android.widget.Space
@@ -21,6 +21,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.PersonOutline
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -43,10 +44,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import br.com.fiap.meuseguroauto.components.CustomLabel
 import br.com.fiap.meuseguroauto.components.CustomTextInput
+import br.com.fiap.meuseguroauto.components.transformations.PhoneVisualTransformation
 import br.com.fiap.meuseguroauto.model.QuoteInput
 import br.com.fiap.meuseguroauto.ui.theme.MeuSeguroAutoTheme
+import br.com.fiap.meuseguroauto.utils.Validators
 
-class MainActivity : ComponentActivity() {
+ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,7 +102,8 @@ fun QuoteScreen(modifier: Modifier = Modifier) {
             restore = {
                 QuoteInput(
                     name = it[0],
-                    email = it[1]
+                    email = it[1],
+                    telefone = it[2]
                 )
             })
     ) { mutableStateOf(QuoteInput()) }
@@ -146,7 +150,18 @@ fun QuoteForm(
             },
             leadingIcon = Icons.Default.AlternateEmail,
             label = stringResource(R.string.label_email),
-            keyboardType = KeyboardType.Email
+            keyboardType = KeyboardType.Email,
+            validator = Validators::emailValidator
+
+        )
+
+        CustomTextInput(
+            value = state.telefone,
+            onValueChange = { onChange(state.copy(telefone = it)) },
+            label = stringResource(R.string.label_phone),
+            validator = Validators::phoneValidator,
+            leadingIcon = Icons.Default.Phone,
+            visualTransformationCustom = PhoneVisualTransformation()
         )
     }
 }
