@@ -8,7 +8,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import br.com.fiap.meuseguroauto.QuoteForm
+import br.com.fiap.meuseguroauto.components.QuoteForm
 import br.com.fiap.meuseguroauto.model.CarInsurancePlan
 import br.com.fiap.meuseguroauto.model.QuoteInput
 import br.com.fiap.meuseguroauto.model.VehicleTypes
@@ -16,6 +16,7 @@ import br.com.fiap.meuseguroauto.ui.theme.MeuSeguroAutoTheme
 
 @Composable
 fun QuoteScreen(modifier: Modifier = Modifier) {
+
     var input by rememberSaveable(
         stateSaver = Saver(
             save = {
@@ -23,7 +24,7 @@ fun QuoteScreen(modifier: Modifier = Modifier) {
                     it.name,
                     it.email,
                     it.telefone,
-                    //it.vehiclePrice,
+                    it.vehiclePrice,
                     it.carInsurancePlan,
                     it.vehicleTypes,
                     it.age,
@@ -39,7 +40,7 @@ fun QuoteScreen(modifier: Modifier = Modifier) {
                     name = it[0] as String,
                     email = it[1] as String,
                     telefone = it[2] as String,
-                    //vehiclePrice = it[3] as String,
+                    vehiclePrice = it[3] as String,
                     carInsurancePlan = CarInsurancePlan.entries[it[4] as Int],
                     vehicleTypes = VehicleTypes.entries[it[5] as Int],
                     age = it[6] as Int,
@@ -57,10 +58,14 @@ fun QuoteScreen(modifier: Modifier = Modifier) {
         onChange = { input = it },
         modifier = modifier
     )
+
+    val price = rememberSaveable(input) {
+        calculateQuote(input)
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun QuoteScreenPreview(modifier: Modifier = Modifier) {
-    MeuSeguroAutoTheme { br.com.fiap.meuseguroauto.QuoteScreen() }
+    MeuSeguroAutoTheme { br.com.fiap.meuseguroauto.ui.screens.quote.QuoteScreen() }
 }

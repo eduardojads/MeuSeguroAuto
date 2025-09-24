@@ -4,6 +4,7 @@ data class QuoteInput(
     val name: String = "",
     val email: String = "",
     val telefone: String = "",
+    val vehiclePrice: String = "",
     val carInsurancePlan: CarInsurancePlan = CarInsurancePlan.STANDARD,
     val vehicleTypes: VehicleTypes = VehicleTypes.CAR,
     val age: Int = 30,
