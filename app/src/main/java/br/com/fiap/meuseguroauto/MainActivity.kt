@@ -1,7 +1,6 @@
  package br.com.fiap.meuseguroauto
 
 import android.os.Bundle
-import android.widget.Space
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -30,7 +29,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -42,13 +40,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import br.com.fiap.meuseguroauto.components.CustomCheckbox
 import br.com.fiap.meuseguroauto.components.CustomDropdown
 import br.com.fiap.meuseguroauto.components.CustomLabel
+import br.com.fiap.meuseguroauto.components.CustomSlider
+import br.com.fiap.meuseguroauto.components.CustomSwitch
 import br.com.fiap.meuseguroauto.components.CustomTextInput
 import br.com.fiap.meuseguroauto.components.transformations.PhoneVisualTransformation
 import br.com.fiap.meuseguroauto.model.CarInsurancePlan
 import br.com.fiap.meuseguroauto.model.QuoteInput
 import br.com.fiap.meuseguroauto.model.VehicleTypes
+import br.com.fiap.meuseguroauto.ui.screens.quote.QuoteScreen
 import br.com.fiap.meuseguroauto.ui.theme.MeuSeguroAutoTheme
 import br.com.fiap.meuseguroauto.utils.Validators
 
@@ -92,102 +94,4 @@ import br.com.fiap.meuseguroauto.utils.Validators
     }
 }
 
-@Composable
-fun QuoteScreen(modifier: Modifier = Modifier) {
-    var input by rememberSaveable(
-        stateSaver = Saver(
-            save = {
-                listOf(
-                    it.name,
-                    it.email,
-                    it.telefone,
-                    it.carInsuransePlan,
-                    it.vehicleTypes
-                )
-            },
-            restore = {
-                QuoteInput(
-                    name = it[0] as String,
-                    email = it[1] as String,
-                    telefone = it[2] as String,
-                    carInsuransePlan = CarInsurancePlan.entries[it[3] as Int],
-                    vehicleTypes = VehicleTypes.entries[it[4] as Int]
-
-                )
-            })
-    ) { mutableStateOf(QuoteInput()) }
-    QuoteForm(
-        state = input,
-        onChange = { input = it },
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun QuoteScreenPreview(modifier: Modifier = Modifier) {
-    MeuSeguroAutoTheme { QuoteScreen() }
-}
-
-
-@Composable
-fun QuoteForm(
-    state: QuoteInput,
-    onChange: (QuoteInput) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            . fillMaxWidth()
-            . verticalScroll(rememberScrollState ())
-            . padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy( 16.dp)
-    ) {
-        CustomLabel (
-            stringResource (R.string.label_customer_data)
-        )
-        CustomTextInput(
-            value = state.name,
-            onValueChange = { onChange(state.copy(name = it))
-            },
-            leadingIcon = Icons.Default.PersonOutline,
-            label = stringResource(R.string.label_name)
-        )
-        CustomTextInput(
-            value = state.email,
-            onValueChange = { onChange(state.copy(email = it))
-            },
-            leadingIcon = Icons.Default.AlternateEmail,
-            label = stringResource(R.string.label_email),
-            keyboardType = KeyboardType.Email,
-            validator = Validators::emailValidator
-
-        )
-
-        CustomTextInput(
-            value = state.telefone,
-            onValueChange = { onChange(state.copy(telefone = it)) },
-            label = stringResource(R.string.label_phone),
-            validator = Validators::phoneValidator,
-            leadingIcon = Icons.Default.Phone,
-            visualTransformationCustom = PhoneVisualTransformation()
-        )
-
-        CustomDropdown(
-            label = "Plano",
-            options = CarInsurancePlan.entries,
-            selected = state.carInsuransePlan,
-            onSelect = {onChange(state.copy(carInsuransePlan = it))},
-            optionLabel = {it.label}
-        )
-
-        CustomDropdown(
-            label = "Veículo",
-            options = VehicleTypes.entries,
-            selected = state.vehicleTypes,
-            onSelect = {onChange(state.copy(vehicleTypes = it))},
-            optionLabel = {it.label}
-        )
-    }
-}
 
